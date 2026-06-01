@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mémo 360° — Évaluer mon projet</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --dark: #1a1410;
+    --brown: #3D2B1F;
+    --copper: #B87333;
+    --gold: #C5A880;
+    --sand: #F2E8CF;
+    --white: #FDFAF5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 60px 24px 40px;
+    position: relative;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--copper));
+  }
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--copper);
+    border: 1px solid var(--copper);
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 6vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--white);
+    opacity: 0;
+    animation: fadeUp 0.6s 0.4s forwards;
+  }
+  header h1 span { color: var(--copper); }
+  .subtitle {
+    font-size: 14px;
+    color: var(--gold);
+    opacity: 0;
+    margin-top: 12px;
+    letter-spacing: 0.5px;
+    animation: fadeUp 0.6s 0.6s forwards;
+  }
+
+  /* INTRO PILL */
+  .intro {
+    max-width: 640px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.8s forwards;
+  }
+  .intro p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(253,250,245,0.7);
+  }
+  .intro strong { color: var(--gold); font-weight: 500; }
+
+  /* WHEEL CONTAINER */
+  .wheel-section {
+    max-width: 900px;
+    margin: 0 auto 60px;
+    padding: 0 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s 1s forwards;
+  }
+
+  .wheel-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 480px;
+    margin: 0 auto 48px;
+  }
+
+  /* SVG WHEEL */
+  .wheel-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* SEGMENTS */
+  .seg {
+    transition: opacity 0.2s;
+    cursor: pointer;
+  }
+  .seg:hover { opacity: 0.85; }
+  .seg.active .seg-fill { filter: brightness(1.3); }
+
+  /* CENTER CIRCLE */
+  .center-circle {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 28%;
+    aspect-ratio: 1;
+    background: var(--dark);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 2px solid var(--copper);
+    pointer-events: none;
+    z-index: 10;
+  }
+  .center-circle .score-num {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 900;
+    color: var(--copper);
+    line-height: 1;
+  }
+  .center-circle .score-label {
+    font-size: clamp(7px, 1.2vw, 10px);
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* DETAIL CARD */
+  .detail-card {
+    background: var(--brown);
+    border-radius: 16px;
+    padding: 24px 28px;
+    border-left: 3px solid var(--copper);
+    min-height: 120px;
+    transition: all 0.3s ease;
+  }
+  .detail-card .dc-num {
+    font-size: 11px;
+    color: var(--copper);
+    letter-spacing: 2px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .detail-card .dc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .detail-card .dc-body {
+    font-size: 13px;
+    line-height: 1.65;
+    color: rgba(253,250,245,0.75);
+  }
+  .detail-card .dc-example {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: rgba(184,115,51,0.12);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--gold);
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .critical-badge {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: rgba(220,80,60,0.2);
+    color: #ff8070;
+    border: 1px solid rgba(220,80,60,0.4);
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+
+  /* MATRIX */
+  .matrix-section {
+    max-width: 640px;
+    margin: 0 auto 60px;
+    padding: 0 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s 1.2s forwards;
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--copper);
+    margin-bottom: 20px;
+  }
+  .matrix-row {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .matrix-score {
+    flex-shrink: 0;
+    width: 64px;
+    background: var(--brown);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .matrix-body {
+    flex: 1;
+    background: var(--brown);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .matrix-status {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .matrix-status.green { color: #6fcf97; }
+  .matrix-status.amber { color: #f2c94c; }
+  .matrix-status.red { color: #eb5757; }
+  .matrix-body p {
+    font-size: 12px;
+    color: rgba(253,250,245,0.7);
+    line-height: 1.5;
+  }
+  .matrix-note {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: rgba(184,115,51,0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(184,115,51,0.25);
+    font-size: 12px;
+    color: var(--gold);
+    line-height: 1.6;
+  }
+  .matrix-note strong { color: var(--copper); }
+
+  /* CTA */
+  .cta-section {
+    max-width: 640px;
+    margin: 0 auto 80px;
+    padding: 0 24px;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 0.6s 1.4s forwards;
+  }
+  .cta-box {
+    background: linear-gradient(135deg, var(--brown), #2a1f15);
+    border-radius: 16px;
+    padding: 36px 28px;
+    border: 1px solid rgba(184,115,51,0.3);
+  }
+  .cta-box h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--white);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .cta-box p { font-size: 13px; color: rgba(253,250,245,0.65); line-height: 1.6; margin-bottom: 20px; }
+  .cta-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cta-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--white);
+    text-align: left;
+  }
+  .cta-line .arrow { color: var(--copper); font-size: 16px; flex-shrink: 0; }
+  .cta-line.highlight .arrow { color: var(--gold); }
+  .cta-line.highlight { color: var(--gold); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 11px;
+    color: rgba(253,250,245,0.3);
+    letter-spacing: 1px;
+    border-top: 1px solid rgba(184,115,51,0.1);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* INSTRUCTION */
+  .instruction {
+    text-align: center;
+    font-size: 11px;
+    color: var(--copper);
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    opacity: 0.8;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">CSMCI Groupe — Mémo 360°</div>
+  <h1>Évaluer mon projet<br><span>entrepreneurial</span></h1>
+  <p class="subtitle">Sidiki TOURÉ · Consultant · csmcigroupe.com</p>
+</header>
+
+<div class="intro">
+  <p>Ce mémo résume les <strong>8 dimensions clés</strong> à valider avant de lancer. Cliquez sur chaque segment de la roue pour explorer chaque critère.</p>
+</div>
+
+<div class="wheel-section">
+  <p class="instruction">↓ Touchez un segment pour l'explorer</p>
+
+  <div class="wheel-wrap">
+    <svg class="wheel-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" id="wheel">
+      <!-- 8 segments, each 45° -->
+      <!-- Colors alternate between copper shades -->
+    </svg>
+    <div class="center-circle">
+      <div class="score-num" id="scoreNum">8</div>
+      <div class="score-label">critères</div>
+    </div>
+  </div>
+
+  <div class="detail-card" id="detailCard">
+    <div class="dc-num">CLIQUEZ UN SEGMENT</div>
+    <div class="dc-title">Vision 360°</div>
+    <div class="dc-body">Chaque segment représente un critère d'évaluation. Ensemble, ils forment une analyse complète de la viabilité de votre projet. Aucun ne doit être négligé.</div>
+  </div>
+</div>
+
+<div class="matrix-section">
+  <div class="section-label">Matrice de Décision</div>
+  <div class="matrix-row">
+    <div class="matrix-score">6–8</div>
+    <div class="matrix-body">
+      <div class="matrix-status green">✅ Lancer</div>
+      <p>Dimensions validées. Exécutez avec confiance, lacunes couvertes par un plan de mitigation.</p>
+    </div>
+  </div>
+  <div class="matrix-row">
+    <div class="matrix-score">3–5</div>
+    <div class="matrix-body">
+      <div class="matrix-status amber">⚠️ Ajuster</div>
+      <p>Angles morts identifiés. Sécurisez les failles critiques avant d'engager vos ressources.</p>
+    </div>
+  </div>
+  <div class="matrix-row">
+    <div class="matrix-score">&lt; 3</div>
+    <div class="matrix-body">
+      <div class="matrix-status red">🛑 Repenser</div>
+      <p>Le projet a du potentiel mais est prématuré. Itérez sur la proposition de valeur.</p>
+    </div>
+  </div>
+  <div class="matrix-note">
+    <strong>Dimensions critiques (blocantes) :</strong> Proposition de valeur · Viabilité financière · Conformité réglementaire.<br>
+    Les 5 autres sont corrigeables en cours de route.
+  </div>
+</div>
+
+<div class="cta-section">
+  <div class="cta-box">
+    <h2>Combien de ces 8 critères<br>avez-vous réellement validés ?</h2>
+    <p>Partagez votre score, taguez un entrepreneur dans votre réseau, ou contactez CSMCI Groupe pour un accompagnement structuré.</p>
+    <div class="cta-actions">
+      <div class="cta-line"><span class="arrow">→</span> Partagez votre score en commentaire LinkedIn</div>
+      <div class="cta-line"><span class="arrow">→</span> Vous accompagnez des porteurs de projets ? Taguez-les.</div>
+      <div class="cta-line highlight"><span class="arrow">→</span> Un projet à évaluer ? contact@csmcigroupe.com</div>
+    </div>
+  </div>
+</div>
+
+<footer>CSMCI Groupe — Excellence &amp; Méthode — www.csmcigroupe.com</footer>
+
+<script>
+const segments = [
+  {
+    num: "01",
+    title: "Proposition de Valeur",
+    color: "#B87333",
+    critical: true,
+    body: "Le fondement absolu : répondre à un besoin existant, ressenti et insuffisamment satisfait. C'est le seul critère qui, s'il échoue, invalide tout le reste.",
+    example: "Airbnb a loué son propre appartement avant de lever le moindre euro. La validation par un acte d'achat reste le signal le plus fiable.",
+    checks: ["Besoin documenté", "Problème douloureux", "Différenciation défendable", "Valeur > Prix"]
+  },
+  {
+    num: "02",
+    title: "Réalité du Marché",
+    color: "#9E6428",
+    critical: false,
+    body: "Un marché mondial en croissance ne signifie pas que votre portion est captable. Calculez votre SOM avec réalisme — c'est lui qui finance vos 12 premiers mois.",
+    example: "TAM global → SAM géographique → SOM réellement capturable à 12 mois. Ne vous perdez pas dans le TAM.",
+    checks: ["TAM identifié", "SAM ciblé", "SOM calculé", "Canaux accessibles"]
+  },
+  {
+    num: "03",
+    title: "Viabilité Financière",
+    color: "#C8903F",
+    critical: true,
+    body: "La passion ne paie pas les charges. Modélisez le scénario pessimiste à 30% du volume espéré. Si la structure survit 12 mois, le projet est robuste.",
+    example: "Marge nette cible > 20% · Trésorerie modélisée sur 6 mois · CAC / LTV ratio > 1:3 · Seuil de rentabilité calculé.",
+    checks: ["Marge nette > 20%", "6 mois de tréso", "CAC/LTV > 1:3", "Seuil calculé"]
+  },
+  {
+    num: "04",
+    title: "Capacité d'Exécution",
+    color: "#A0702E",
+    critical: false,
+    body: "L'écart entre l'idée et la réalité est le cimetière des projets. Évaluez votre bande passante réelle, pas votre enthousiasme du moment.",
+    example: "Équipe alignée sur la vision · Temps dédié vs. charges réelles · Anticipez les blocages dès J-1 · Plan de montée en charge progressif.",
+    checks: ["Équipe engagée", "Bande passante réelle", "Goulots anticipés", "Plan de charge"]
+  },
+  {
+    num: "05",
+    title: "Environnement Réglementaire",
+    color: "#B87333",
+    critical: true,
+    body: "La non-conformité est le premier risque sous-estimé. Elle peut bloquer un lancement et détruire une réputation avant même le premier client.",
+    example: "Dépôt de marque, RGPD, certifications sectorielles : auditez avant de communiquer. Un avocat coûte moins cher qu'une mise en demeure.",
+    checks: ["Statut juridique", "Conformité RGPD", "Obligations sectorielles", "Propriété intellectuelle"]
+  },
+  {
+    num: "06",
+    title: "Chaîne de Valeur",
+    color: "#9E6428",
+    critical: false,
+    body: "Un fournisseur unique est une bombe à retardement. La dépendance logistique est une fragilité systémique que l'on corrige en amont.",
+    example: "Minimum 2 fournisseurs par composant critique · Contrats pluriannuels pour stabiliser les coûts · Réserves stratégiques pour absorber les retards.",
+    checks: ["Multi-sourcing", "Analyse de risque", "Stock de sécurité", "Contractualisation"]
+  },
+  {
+    num: "07",
+    title: "Acquisition Client",
+    color: "#C8903F",
+    critical: false,
+    body: "Un canal non validé est une hypothèse, pas une stratégie. Le CAC et la conversion doivent être testés, pas projetés sur un tableau Excel.",
+    example: "En e-commerce B2C, CAC courant : 15–40€. Au-delà sans LTV solide, la structure s'effondre. Mesurez avant de scaler.",
+    checks: ["Canal principal testé", "LTV > 3× CAC", "Plan de rétention", "Données réelles"]
+  },
+  {
+    num: "08",
+    title: "Plan de Continuité",
+    color: "#A0702E",
+    critical: false,
+    body: "La résilience n'est pas un luxe de grande entreprise — c'est une exigence de survie pour tout auto-entrepreneur. Anticiper les ruptures, c'est transformer la fragilité en robustesse.",
+    example: "Top 5 risques identifiés · Réponse planifiée par risque · Assurance professionnelle validée · Trésorerie de secours ≥ 3 mois.",
+    checks: ["5 risques identifiés", "Réponse planifiée", "Assurance validée", "Tréso secours ≥3 mois"]
+  }
+];
+
+const svg = document.getElementById('wheel');
+const detail = document.getElementById('detailCard');
+const scoreNum = document.getElementById('scoreNum');
+const cx = 200, cy = 200, r = 190, innerR = 62;
+const startAngle = -90; // top
+
+function polarToCart(cx, cy, r, angleDeg) {
+  const rad = (angleDeg * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+function describeSegment(index) {
+  const n = 8;
+  const angle = 360 / n;
+  const start = startAngle + index * angle;
+  const end = start + angle - 2; // small gap
+  const p1 = polarToCart(cx, cy, r, start);
+  const p2 = polarToCart(cx, cy, r, end);
+  const p3 = polarToCart(cx, cy, innerR, end);
+  const p4 = polarToCart(cx, cy, innerR, start);
+  return `M ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} L ${p3.x} ${p3.y} A ${innerR} ${innerR} 0 0 0 ${p4.x} ${p4.y} Z`;
+}
+
+function getLabelPos(index) {
+  const angle = 360 / 8;
+  const mid = startAngle + index * angle + angle / 2;
+  const labelR = (r + innerR) / 2;
+  return polarToCart(cx, cy, labelR, mid);
+}
+
+let activeIndex = null;
+
+segments.forEach((seg, i) => {
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('class', 'seg');
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', describeSegment(i));
+  path.setAttribute('fill', seg.color);
+  path.setAttribute('opacity', '0.85');
+  path.setAttribute('class', 'seg-fill');
+  path.style.transition = 'all 0.2s';
+
+  // Number label
+  const lp = getLabelPos(i);
+  const numText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  numText.setAttribute('x', lp.x);
+  numText.setAttribute('y', lp.y - 8);
+  numText.setAttribute('text-anchor', 'middle');
+  numText.setAttribute('dominant-baseline', 'middle');
+  numText.setAttribute('fill', '#fff');
+  numText.setAttribute('font-size', '13');
+  numText.setAttribute('font-weight', '700');
+  numText.setAttribute('font-family', 'Playfair Display, serif');
+  numText.textContent = seg.num;
+
+  // Short title (first word)
+  const shortTitle = seg.title.split(' ')[0];
+  const titleText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  titleText.setAttribute('x', lp.x);
+  titleText.setAttribute('y', lp.y + 10);
+  titleText.setAttribute('text-anchor', 'middle');
+  titleText.setAttribute('dominant-baseline', 'middle');
+  titleText.setAttribute('fill', 'rgba(255,255,255,0.75)');
+  titleText.setAttribute('font-size', '8');
+  titleText.setAttribute('font-family', 'DM Sans, sans-serif');
+  titleText.textContent = shortTitle;
+
+  g.appendChild(path);
+  g.appendChild(numText);
+  g.appendChild(titleText);
+  svg.appendChild(g);
+
+  g.addEventListener('click', () => {
+    // reset all
+    svg.querySelectorAll('.seg-fill').forEach((p, idx) => {
+      p.setAttribute('opacity', activeIndex === idx ? '1' : '0.85');
+    });
+
+    if (activeIndex === i) {
+      // deselect
+      path.setAttribute('opacity', '0.85');
+      activeIndex = null;
+      scoreNum.textContent = '8';
+      detail.innerHTML = `
+        <div class="dc-num">CLIQUEZ UN SEGMENT</div>
+        <div class="dc-title">Vision 360°</div>
+        <div class="dc-body">Chaque segment représente un critère d'évaluation. Ensemble, ils forment une analyse complète de la viabilité de votre projet. Aucun ne doit être négligé.</div>
+      `;
+      return;
+    }
+
+    activeIndex = i;
+    svg.querySelectorAll('.seg-fill').forEach((p, idx) => {
+      p.setAttribute('opacity', idx === i ? '1' : '0.45');
+    });
+
+    scoreNum.textContent = seg.num;
+
+    const criticalBadge = seg.critical ? `<div class="critical-badge">⚡ Dimension critique</div>` : '';
+    const checks = seg.checks.map(c => `<span style="display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;background:rgba(184,115,51,0.15);border-radius:6px;font-size:11px;color:var(--gold)">${c}</span>`).join('');
+
+    detail.innerHTML = `
+      ${criticalBadge}
+      <div class="dc-num">${seg.num} / 08</div>
+      <div class="dc-title">${seg.title}</div>
+      <div class="dc-body">${seg.body}<br><br>${checks}</div>
+      <div class="dc-example">${seg.example}</div>
+    `;
+  });
+});
+</script>
+</body>
+</html>
