@@ -1,8 +1,58 @@
+diff --git a/remotion-composer/src/Explainer.tsx b/remotion-composer/src/Explainer.tsx
+index 707e6db..43f4916 100644
+--- a/remotion-composer/src/Explainer.tsx
++++ b/remotion-composer/src/Explainer.tsx
+@@ -238,6 +238,7 @@ interface Cut {
+   color?: string;
+   accentColor?: string;
+   fontSize?: number;
++  subtitleFontSize?: number;
+   // Animation & transitions
+   animation?: string;
+   transition_in?: string;
+@@ -595,7 +596,7 @@ const SceneRenderer: React.FC<{ cut: Cut; theme: ThemeConfig }> = ({ cut, theme
+   }
+   if (cut.type === "stat_card" && cut.stat) {
+     return maybeWrapWithBg(
+-      <StatCard stat={cut.stat} subtitle={cut.subtitle} accentColor={accent} backgroundColor={bgColor} />
++      <StatCard stat={cut.stat} subtitle={cut.subtitle} statFontSize={cut.fontSize} subtitleFontSize={cut.subtitleFontSize} accentColor={accent} backgroundColor={bgColor} />
+     );
+   }
+   if (cut.type === "callout" && cut.text) {
+@@ -622,6 +623,8 @@ const SceneRenderer: React.FC<{ cut: Cut; theme: ThemeConfig }> = ({ cut, theme
+       <HeroTitle
+         title={cut.text}
+         subtitle={cut.heroSubtitle || cut.subtitle}
++        titleFontSize={cut.fontSize}
++        subtitleFontSize={cut.subtitleFontSize}
+         accentColor={accent}
+         textColor={textColor}
+         subtitleColor={theme.mutedTextColor}
 diff --git a/remotion-composer/src/components/HeroTitle.tsx b/remotion-composer/src/components/HeroTitle.tsx
-index e22e4bd..5392afa 100644
+index e22e4bd..5fa88c4 100644
 --- a/remotion-composer/src/components/HeroTitle.tsx
 +++ b/remotion-composer/src/components/HeroTitle.tsx
-@@ -37,8 +37,13 @@ export const HeroTitle: React.FC<HeroTitleProps> = ({
+@@ -9,6 +9,10 @@ import {
+ type HeroTitleProps = {
+   title: string;
+   subtitle?: string;
++  /** Title font size in px (default 72). */
++  titleFontSize?: number;
++  /** Subtitle font size in px (default 28). */
++  subtitleFontSize?: number;
+   /** Color of the leading accent characters and the underline. */
+   accentColor?: string;
+   /** Color of the remaining title characters. Pass the theme's textColor. */
+@@ -29,6 +33,8 @@ const DEFAULT_SCRIM =
+ export const HeroTitle: React.FC<HeroTitleProps> = ({
+   title,
+   subtitle,
++  titleFontSize = 72,
++  subtitleFontSize = 28,
+   accentColor = "#22D3EE",
+   textColor = "#F8FAFC",
+   subtitleColor = "#A78BFA",
+@@ -37,8 +43,13 @@ export const HeroTitle: React.FC<HeroTitleProps> = ({
    const frame = useCurrentFrame();
    const { fps } = useVideoConfig();
  
@@ -18,7 +68,15 @@ index e22e4bd..5392afa 100644
  
    return (
      <AbsoluteFill
-@@ -59,33 +64,36 @@ export const HeroTitle: React.FC<HeroTitleProps> = ({
+@@ -52,40 +63,43 @@ export const HeroTitle: React.FC<HeroTitleProps> = ({
+         {/* Main title with per-character spring */}
+         <div
+           style={{
+-            fontSize: 72,
++            fontSize: titleFontSize,
+             fontWeight: 800,
+             fontFamily: "Space Grotesk, Inter, system-ui, sans-serif",
+             lineHeight: 1.2,
              display: "flex",
              justifyContent: "center",
              flexWrap: "wrap",
@@ -79,7 +137,7 @@ index e22e4bd..5392afa 100644
          </div>
  
          {/* Subtitle */}
-@@ -94,7 +102,7 @@ export const HeroTitle: React.FC<HeroTitleProps> = ({
+@@ -94,11 +108,11 @@ export const HeroTitle: React.FC<HeroTitleProps> = ({
              style={{
                marginTop: 20,
                opacity: spring({
@@ -88,6 +146,11 @@ index e22e4bd..5392afa 100644
                  fps,
                  config: { damping: 20 },
                }),
+-              fontSize: 28,
++              fontSize: subtitleFontSize,
+               fontWeight: 400,
+               color: subtitleColor,
+               fontFamily: "Space Grotesk, Inter, system-ui, sans-serif",
 diff --git a/remotion-composer/src/components/StatCard.tsx b/remotion-composer/src/components/StatCard.tsx
 index dc228ed..e42f826 100644
 --- a/remotion-composer/src/components/StatCard.tsx

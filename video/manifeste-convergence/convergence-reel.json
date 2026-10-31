@@ -1,0 +1,137 @@
+{
+  "themeConfig": {
+    "primaryColor": "#3D2B1F",
+    "accentColor": "#B87333",
+    "backgroundColor": "#1A1410",
+    "surfaceColor": "#2A1F15",
+    "textColor": "#FDFAF5",
+    "mutedTextColor": "#C5A880",
+    "headingFont": "Playfair Display",
+    "bodyFont": "Space Grotesk",
+    "chartColors": [
+      "#C5A880",
+      "#B87333",
+      "#F2C94C"
+    ],
+    "captionHighlightColor": "#C5A880",
+    "captionBackgroundColor": "rgba(26, 20, 16, 0.8)"
+  },
+  "cuts": [
+    {
+      "id": "hook",
+      "source": "",
+      "type": "hero_title",
+      "in_seconds": 0,
+      "out_seconds": 2.5,
+      "text": "Vos décisions ont des angles morts.",
+      "accentColor": "#B87333",
+      "backgroundColor": "#1A1410",
+      "fontSize": 120,
+      "subtitleFontSize": 40
+    },
+    {
+      "id": "s47",
+      "source": "",
+      "type": "stat_card",
+      "in_seconds": 2.5,
+      "out_seconds": 6,
+      "stat": "47 %",
+      "subtitle": "des dirigeants finance & tech ont tranché sur des données fausses ou incomplètes. (OneStream, 2026)",
+      "fontSize": 260,
+      "subtitleFontSize": 46,
+      "accentColor": "#B87333",
+      "backgroundColor": "#1A1410"
+    },
+    {
+      "id": "s38",
+      "source": "",
+      "type": "stat_card",
+      "in_seconds": 6,
+      "out_seconds": 9.5,
+      "stat": "38 %",
+      "subtitle": "des assureurs ne sont pas sûrs de voir l'ensemble de leurs risques. (SAS, 2025)",
+      "fontSize": 260,
+      "subtitleFontSize": 46,
+      "accentColor": "#C5A880",
+      "backgroundColor": "#1A1410"
+    },
+    {
+      "id": "s54",
+      "source": "",
+      "type": "stat_card",
+      "in_seconds": 9.5,
+      "out_seconds": 13,
+      "stat": "54 %",
+      "subtitle": "des dirigeants doutent de savoir lire leurs données. (Salesforce, 2025)",
+      "fontSize": 260,
+      "subtitleFontSize": 46,
+      "accentColor": "#F2C94C",
+      "backgroundColor": "#1A1410"
+    },
+    {
+      "id": "silos",
+      "source": "",
+      "type": "hero_title",
+      "in_seconds": 13,
+      "out_seconds": 14.5,
+      "text": "Le problème ?",
+      "accentColor": "#B87333",
+      "backgroundColor": "#1A1410",
+      "fontSize": 120,
+      "subtitleFontSize": 40
+    },
+    {
+      "id": "silos2",
+      "source": "",
+      "type": "hero_title",
+      "in_seconds": 14.5,
+      "out_seconds": 16,
+      "text": "Les silos.",
+      "accentColor": "#F2C94C",
+      "backgroundColor": "#1A1410",
+      "fontSize": 170,
+      "subtitleFontSize": 40
+    },
+    {
+      "id": "ic",
+      "source": "",
+      "type": "hero_title",
+      "in_seconds": 16,
+      "out_seconds": 19.5,
+      "text": "Intelligence de Convergence®",
+      "accentColor": "#B87333",
+      "backgroundColor": "#1A1410",
+      "subtitle": "Tout voir avant de décider.",
+      "fontSize": 104,
+      "subtitleFontSize": 40
+    },
+    {
+      "id": "verdict",
+      "source": "",
+      "type": "hero_title",
+      "in_seconds": 19.5,
+      "out_seconds": 22,
+      "text": "Lancer. Ajuster. Repenser.",
+      "accentColor": "#C5A880",
+      "backgroundColor": "#1A1410",
+      "fontSize": 120,
+      "subtitleFontSize": 40
+    },
+    {
+      "id": "signature",
+      "source": "",
+      "type": "hero_title",
+      "in_seconds": 22,
+      "out_seconds": 25,
+      "text": "CSMCI Groupe",
+      "accentColor": "#B87333",
+      "backgroundColor": "#1A1410",
+      "subtitle": "csmcigroupe.com",
+      "fontSize": 120,
+      "subtitleFontSize": 40
+    }
+  ],
+  "overlays": [],
+  "captions": [],
+  "audio": {}
+}

@@ -1,16 +1,18 @@
 # Manifeste — Intelligence de Convergence®
 
-Vidéo LinkedIn carrée (1080×1080, 46 s, sans son) produite avec
+Deux versions, sans son, produites avec
 [OpenMontage](https://github.com/calesthio/OpenMontage) (commit `195eab2`),
 moteur de montage Remotion, aux couleurs du Mémo 360° CSMCI Groupe.
 
 | Fichier | Rôle |
 |---|---|
-| `manifeste-convergence-1x1.mp4` | La vidéo finale |
-| `convergence-manifeste.json` | Le storyboard : textes, durées, couleurs (modifiable) |
+| `manifeste-convergence-1x1.mp4` | Version LinkedIn : carré 1080×1080, 46 s |
+| `convergence-manifeste.json` | Storyboard LinkedIn : textes, durées, couleurs (modifiable) |
+| `manifeste-convergence-reel-9x16.mp4` | Version Instagram Reel : vertical 1080×1920, 26 s |
+| `convergence-reel.json` | Storyboard du Reel (modifiable) |
 | `openmontage-fixes.patch` | Corrections apportées aux composants d'OpenMontage |
 
-## Déroulé
+## Déroulé — version LinkedIn
 
 1. 0–4 s — « Vos décisions ont des angles morts. »
 2. 4–20,5 s — trois chiffres sourcés (voir ci-dessous)
@@ -18,6 +20,18 @@ moteur de montage Remotion, aux couleurs du Mémo 360° CSMCI Groupe.
 4. 30–35,5 s — Intelligence de Convergence® : *faire converger toutes les dimensions d'un projet pour révéler les angles morts avant de décider.*
 5. 35,5–40 s — « Lancer. Ajuster. Repenser. Décider en voyant tout. »
 6. 40–46 s — Signature CSMCI Groupe
+
+## Déroulé — Reel Instagram (≈ 3 s par écran)
+
+1. 0–2,5 s — « Vos décisions ont des angles morts. »
+2. 2,5–13 s — 47 % / 38 % / 54 % en très grand, textes raccourcis
+3. 13–16 s — « Le problème ? » puis « Les silos. »
+4. 16–19,5 s — Intelligence de Convergence® : « Tout voir avant de décider. »
+5. 19,5–22 s — « Lancer. Ajuster. Repenser. »
+6. 22–26 s — Signature CSMCI Groupe
+
+Le son est à ajouter dans Instagram (bibliothèque musicale sous licence de l'application).
+Les textes restent dans la zone centrale, hors des boutons d'interface en bas d'écran.
 
 ## Sources des chiffres
 
@@ -41,9 +55,10 @@ npx remotion render src/index.tsx Explainer manifeste.mp4 \
   --codec h264 --width=1080 --height=1080
 ```
 
-Pour une version verticale 9:16, remplacer par `--width=1080 --height=1920`.
+Pour le Reel : utiliser `convergence-reel.json` avec `--width=1080 --height=1920`.
 
 ## Corrections incluses dans le patch
 
 - `HeroTitle.tsx` : les titres ne se coupent plus au milieu des mots, et la couleur d'accent porte bien sur le premier mot (et non sur les 8 premiers caractères).
+- `HeroTitle.tsx` / `StatCard.tsx` / `Explainer.tsx` : tailles des titres et des chiffres réglables depuis le storyboard (`fontSize`, `subtitleFontSize`) ; sans ces champs, rendu identique à l'original.
 - `StatCard.tsx` : marge latérale et interligne pour le texte sous les chiffres (lisibilité en format carré ou vertical).
