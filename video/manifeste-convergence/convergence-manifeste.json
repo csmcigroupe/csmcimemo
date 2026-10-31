@@ -1,0 +1,123 @@
+{
+  "themeConfig": {
+    "primaryColor": "#3D2B1F",
+    "accentColor": "#B87333",
+    "backgroundColor": "#1A1410",
+    "surfaceColor": "#2A1F15",
+    "textColor": "#FDFAF5",
+    "mutedTextColor": "#C5A880",
+    "headingFont": "Playfair Display",
+    "bodyFont": "Space Grotesk",
+    "chartColors": [
+      "#C5A880",
+      "#B87333",
+      "#F2C94C"
+    ],
+    "captionHighlightColor": "#C5A880",
+    "captionBackgroundColor": "rgba(26, 20, 16, 0.8)"
+  },
+  "cuts": [
+    {
+      "id": "hook",
+      "source": "",
+      "type": "hero_title",
+      "in_seconds": 0,
+      "out_seconds": 4,
+      "text": "Vos décisions ont des angles morts.",
+      "subtitle": "Un manifeste en 45 secondes",
+      "accentColor": "#B87333",
+      "backgroundColor": "#1A1410"
+    },
+    {
+      "id": "stat-47",
+      "source": "",
+      "type": "stat_card",
+      "in_seconds": 4,
+      "out_seconds": 9.5,
+      "stat": "47 %",
+      "subtitle": "des dirigeants finance et tech ont pris une décision majeure sur des données inexactes, incomplètes ou périmées en un an. (OneStream, 2026)",
+      "accentColor": "#B87333",
+      "backgroundColor": "#1A1410"
+    },
+    {
+      "id": "stat-38",
+      "source": "",
+      "type": "stat_card",
+      "in_seconds": 9.5,
+      "out_seconds": 15,
+      "stat": "38 %",
+      "subtitle": "des dirigeants de l'assurance ne sont pas sûrs d'avoir une vue d'ensemble de leurs risques, revenus et coûts. (SAS / Risk.net, 2025)",
+      "accentColor": "#C5A880",
+      "backgroundColor": "#1A1410"
+    },
+    {
+      "id": "stat-54",
+      "source": "",
+      "type": "stat_card",
+      "in_seconds": 15,
+      "out_seconds": 20.5,
+      "stat": "54 %",
+      "subtitle": "des dirigeants ne sont pas pleinement sûrs de savoir trouver, analyser et interpréter leurs données. (Salesforce, 2025)",
+      "accentColor": "#F2C94C",
+      "backgroundColor": "#1A1410"
+    },
+    {
+      "id": "silos",
+      "source": "",
+      "type": "hero_title",
+      "in_seconds": 20.5,
+      "out_seconds": 25,
+      "text": "Le problème n'est pas l'information.",
+      "subtitle": "C'est qu'elle arrive en silos.",
+      "accentColor": "#B87333",
+      "backgroundColor": "#1A1410"
+    },
+    {
+      "id": "couloirs",
+      "source": "",
+      "type": "hero_title",
+      "in_seconds": 25,
+      "out_seconds": 30,
+      "text": "Valeur. Finances. Conformité.",
+      "subtitle": "Chacun voit juste… dans son couloir. Entre les couloirs : les angles morts.",
+      "accentColor": "#C5A880",
+      "backgroundColor": "#1A1410"
+    },
+    {
+      "id": "ic",
+      "source": "",
+      "type": "hero_title",
+      "in_seconds": 30,
+      "out_seconds": 35.5,
+      "text": "Intelligence de Convergence®",
+      "subtitle": "Faire converger toutes les dimensions d'un projet pour révéler les angles morts avant de décider.",
+      "accentColor": "#B87333",
+      "backgroundColor": "#1A1410"
+    },
+    {
+      "id": "verdict",
+      "source": "",
+      "type": "hero_title",
+      "in_seconds": 35.5,
+      "out_seconds": 40,
+      "text": "Lancer. Ajuster. Repenser.",
+      "subtitle": "Décider en voyant tout.",
+      "accentColor": "#C5A880",
+      "backgroundColor": "#1A1410"
+    },
+    {
+      "id": "signature",
+      "source": "",
+      "type": "hero_title",
+      "in_seconds": 40,
+      "out_seconds": 45,
+      "text": "CSMCI Groupe",
+      "subtitle": "csmcigroupe.com · contact@csmcigroupe.com",
+      "accentColor": "#B87333",
+      "backgroundColor": "#1A1410"
+    }
+  ],
+  "overlays": [],
+  "captions": [],
+  "audio": {}
+}
