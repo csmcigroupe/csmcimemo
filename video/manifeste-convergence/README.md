@@ -8,7 +8,7 @@ moteur de montage Remotion, aux couleurs du Mémo 360° CSMCI Groupe.
 |---|---|
 | `manifeste-convergence-1x1.mp4` | Version LinkedIn : carré 1080×1080, 46 s |
 | `convergence-manifeste.json` | Storyboard LinkedIn : textes, durées, couleurs (modifiable) |
-| `manifeste-convergence-reel-9x16.mp4` | Version Instagram Reel : vertical 1080×1920, 26 s |
+| `manifeste-convergence-reel-9x16.mp4` | Version Instagram Reel : vertical 1080×1920, 31 s |
 | `convergence-reel.json` | Storyboard du Reel (modifiable) |
 | `openmontage-fixes.patch` | Corrections apportées aux composants d'OpenMontage |
 
@@ -21,14 +21,16 @@ moteur de montage Remotion, aux couleurs du Mémo 360° CSMCI Groupe.
 5. 35,5–40 s — « Lancer. Ajuster. Repenser. Décider en voyant tout. »
 6. 40–46 s — Signature CSMCI Groupe
 
-## Déroulé — Reel Instagram (≈ 3 s par écran)
+## Déroulé — Reel Instagram (≈ 31 s)
 
 1. 0–2,5 s — « Vos décisions ont des angles morts. »
 2. 2,5–13 s — 47 % / 38 % / 54 % en très grand, textes raccourcis
 3. 13–16 s — « Le problème ? » puis « Les silos. »
-4. 16–19,5 s — Intelligence de Convergence® : « Tout voir avant de décider. »
-5. 19,5–22 s — « Lancer. Ajuster. Repenser. »
-6. 22–26 s — Signature CSMCI Groupe
+4. 16–18,5 s — « Valeur. Finances. Conformité. — Chacun dans son couloir. »
+5. 18,5–21,5 s — « CSMCI Groupe intervient entre les silos. »
+6. 21,5–25 s — « 8 dimensions. Une seule vision. — Mémo 360° · Intelligence de Convergence® »
+7. 25–27,5 s — « Lancer. Ajuster. Repenser. »
+8. 27,5–31 s — « CSMCI Groupe — Évaluez votre projet · csmcigroupe.com »
 
 Le son est à ajouter dans Instagram (bibliothèque musicale sous licence de l'application).
 Les textes restent dans la zone centrale, hors des boutons d'interface en bas d'écran.
