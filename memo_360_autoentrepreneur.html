@@ -336,6 +336,54 @@
     margin-bottom: 16px;
     opacity: 0.8;
   }
+
+  /* SCORING / CONVERGENCE */
+  .checks { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .check-btn {
+    font: inherit; font-size: 12px; cursor: pointer;
+    padding: 6px 10px; border-radius: 8px;
+    background: rgba(184,115,51,0.12); color: var(--gold);
+    border: 1px solid rgba(184,115,51,0.3);
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .check-btn::before { content: '○ '; }
+  .check-btn[aria-pressed="true"] { background: var(--copper); color: var(--dark); border-color: var(--copper); }
+  .check-btn[aria-pressed="true"]::before { content: '● '; }
+  .check-btn:focus-visible, .seg:focus-visible, .tool-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .seg:focus { outline: none; }
+  .seg:focus-visible .seg-fill { stroke: var(--white); stroke-width: 2; }
+  .dc-progress { margin-top: 10px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); }
+  .dc-progress.ok { color: #6fcf97; }
+
+  .matrix-row { transition: opacity .3s, transform .3s; }
+  .matrix-row.dim { opacity: 0.35; }
+  .matrix-row.current .matrix-score { background: var(--copper); color: var(--dark); }
+  .matrix-row.current .matrix-body { outline: 1px solid var(--copper); }
+
+  .verdict {
+    margin-bottom: 20px; padding: 18px 20px; border-radius: 12px;
+    background: var(--brown); border-left: 3px solid var(--copper);
+  }
+  .verdict-title { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 6px; }
+  .verdict p { font-size: 13px; line-height: 1.6; color: rgba(253,250,245,0.75); }
+  .blindspots { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .blindspot {
+    font-size: 11px; padding: 3px 9px; border-radius: 10px;
+    background: rgba(253,250,245,0.06); color: rgba(253,250,245,0.8);
+    border: 1px solid rgba(253,250,245,0.15);
+  }
+  .blindspot.crit { background: rgba(220,80,60,0.18); color: #ff8070; border-color: rgba(220,80,60,0.4); }
+  .tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  .tool-btn {
+    font: inherit; font-size: 12px; cursor: pointer; padding: 8px 14px; border-radius: 8px;
+    background: transparent; color: var(--gold); border: 1px solid rgba(197,168,128,0.4);
+  }
+  .tool-btn.primary { background: var(--copper); color: var(--dark); border-color: var(--copper); font-weight: 500; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0ms !important; transition: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -347,47 +395,47 @@
 </header>
 
 <div class="intro">
-  <p>Ce mémo résume les <strong>8 dimensions clés</strong> à valider avant de lancer. Cliquez sur chaque segment de la roue pour explorer chaque critère.</p>
+  <p>Ce mémo résume les <strong>8 dimensions clés</strong> à valider avant de lancer. Ouvrez chaque segment, cochez ce que vous avez <strong>réellement prouvé</strong> — la matrice calcule votre verdict et révèle vos angles morts.</p>
 </div>
 
 <div class="wheel-section">
-  <p class="instruction">↓ Touchez un segment pour l'explorer</p>
+  <p class="instruction">↓ Touchez un segment (ou Tab + Entrée) pour l'explorer et vous noter</p>
 
   <div class="wheel-wrap">
-    <svg class="wheel-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" id="wheel">
-      <!-- 8 segments, each 45° -->
-      <!-- Colors alternate between copper shades -->
+    <svg class="wheel-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" id="wheel" role="group" aria-label="Roue des 8 dimensions">
+      <!-- 8 segments générés en JS -->
     </svg>
-    <div class="center-circle">
-      <div class="score-num" id="scoreNum">8</div>
-      <div class="score-label">critères</div>
+    <div class="center-circle" aria-hidden="true">
+      <div class="score-num" id="scoreNum">0/8</div>
+      <div class="score-label">validées</div>
     </div>
   </div>
 
-  <div class="detail-card" id="detailCard">
+  <div class="detail-card" id="detailCard" aria-live="polite">
     <div class="dc-num">CLIQUEZ UN SEGMENT</div>
     <div class="dc-title">Vision 360°</div>
-    <div class="dc-body">Chaque segment représente un critère d'évaluation. Ensemble, ils forment une analyse complète de la viabilité de votre projet. Aucun ne doit être négligé.</div>
+    <div class="dc-body">Chaque segment représente un critère d'évaluation. Une dimension est <strong>validée</strong> quand au moins 3 de ses 4 preuves sont cochées — 4 sur 4 pour une dimension critique.</div>
   </div>
 </div>
 
 <div class="matrix-section">
   <div class="section-label">Matrice de Décision</div>
-  <div class="matrix-row">
+  <div class="verdict" id="verdict" aria-live="polite"></div>
+  <div class="matrix-row" data-band="go">
     <div class="matrix-score">6–8</div>
     <div class="matrix-body">
       <div class="matrix-status green">✅ Lancer</div>
       <p>Dimensions validées. Exécutez avec confiance, lacunes couvertes par un plan de mitigation.</p>
     </div>
   </div>
-  <div class="matrix-row">
+  <div class="matrix-row" data-band="adjust">
     <div class="matrix-score">3–5</div>
     <div class="matrix-body">
       <div class="matrix-status amber">⚠️ Ajuster</div>
       <p>Angles morts identifiés. Sécurisez les failles critiques avant d'engager vos ressources.</p>
     </div>
   </div>
-  <div class="matrix-row">
+  <div class="matrix-row" data-band="rethink">
     <div class="matrix-score">&lt; 3</div>
     <div class="matrix-body">
       <div class="matrix-status red">🛑 Repenser</div>
@@ -396,7 +444,8 @@
   </div>
   <div class="matrix-note">
     <strong>Dimensions critiques (blocantes) :</strong> Proposition de valeur · Viabilité financière · Conformité réglementaire.<br>
-    Les 5 autres sont corrigeables en cours de route.
+    Les 5 autres sont corrigeables en cours de route.<br>
+    <strong>Règle de convergence :</strong> une seule dimension critique non validée plafonne le verdict à « Ajuster », quel que soit le score.
   </div>
 </div>
 
@@ -440,8 +489,8 @@ const segments = [
     color: "#C8903F",
     critical: true,
     body: "La passion ne paie pas les charges. Modélisez le scénario pessimiste à 30% du volume espéré. Si la structure survit 12 mois, le projet est robuste.",
-    example: "Marge nette cible > 20% · Trésorerie modélisée sur 6 mois · CAC / LTV ratio > 1:3 · Seuil de rentabilité calculé.",
-    checks: ["Marge nette > 20%", "6 mois de tréso", "CAC/LTV > 1:3", "Seuil calculé"]
+    example: "Marge nette cible > 20% · Trésorerie modélisée sur 6 mois · LTV/CAC ≥ 3 · Seuil de rentabilité calculé.",
+    checks: ["Marge nette > 20%", "6 mois de tréso", "LTV/CAC ≥ 3", "Seuil calculé"]
   },
   {
     num: "04",
@@ -477,7 +526,7 @@ const segments = [
     critical: false,
     body: "Un canal non validé est une hypothèse, pas une stratégie. Le CAC et la conversion doivent être testés, pas projetés sur un tableau Excel.",
     example: "En e-commerce B2C, CAC courant : 15–40€. Au-delà sans LTV solide, la structure s'effondre. Mesurez avant de scaler.",
-    checks: ["Canal principal testé", "LTV > 3× CAC", "Plan de rétention", "Données réelles"]
+    checks: ["Canal principal testé", "LTV ≥ 3× CAC", "Plan de rétention", "Données réelles"]
   },
   {
     num: "08",
@@ -493,8 +542,26 @@ const segments = [
 const svg = document.getElementById('wheel');
 const detail = document.getElementById('detailCard');
 const scoreNum = document.getElementById('scoreNum');
+const verdictEl = document.getElementById('verdict');
 const cx = 200, cy = 200, r = 190, innerR = 62;
 const startAngle = -90; // top
+const N = segments.length;
+const STORE_KEY = 'csmci-memo360-v1';
+const DEFAULT_DETAIL = detail.innerHTML;
+
+// État : pour chaque dimension, tableau de booléens (une case par preuve)
+let state = segments.map(seg => seg.checks.map(() => false));
+try {
+  const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+  if (Array.isArray(saved) && saved.length === N) {
+    state = segments.map((seg, i) => seg.checks.map((_, j) => !!(saved[i] && saved[i][j])));
+  }
+} catch (e) { /* stockage indisponible : on continue sans */ }
+function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+const doneCount = i => state[i].filter(Boolean).length;
+const threshold = i => segments[i].critical ? segments[i].checks.length : 3;
+const isValidated = i => doneCount(i) >= threshold(i);
 
 function polarToCart(cx, cy, r, angleDeg) {
   const rad = (angleDeg * Math.PI) / 180;
@@ -502,8 +569,7 @@ function polarToCart(cx, cy, r, angleDeg) {
 }
 
 function describeSegment(index) {
-  const n = 8;
-  const angle = 360 / n;
+  const angle = 360 / N;
   const start = startAngle + index * angle;
   const end = start + angle - 2; // small gap
   const p1 = polarToCart(cx, cy, r, start);
@@ -514,93 +580,165 @@ function describeSegment(index) {
 }
 
 function getLabelPos(index) {
-  const angle = 360 / 8;
+  const angle = 360 / N;
   const mid = startAngle + index * angle + angle / 2;
-  const labelR = (r + innerR) / 2;
-  return polarToCart(cx, cy, labelR, mid);
+  return polarToCart(cx, cy, (r + innerR) / 2, mid);
+}
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
 }
 
 let activeIndex = null;
+const groups = [];
 
 segments.forEach((seg, i) => {
-  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  g.setAttribute('class', 'seg');
-
-  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', describeSegment(i));
-  path.setAttribute('fill', seg.color);
-  path.setAttribute('opacity', '0.85');
-  path.setAttribute('class', 'seg-fill');
+  const g = svgEl('g', { class: 'seg', tabindex: '0', role: 'button' });
+  const path = svgEl('path', { d: describeSegment(i), fill: seg.color, class: 'seg-fill' });
   path.style.transition = 'all 0.2s';
-
-  // Number label
   const lp = getLabelPos(i);
-  const numText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  numText.setAttribute('x', lp.x);
-  numText.setAttribute('y', lp.y - 8);
-  numText.setAttribute('text-anchor', 'middle');
-  numText.setAttribute('dominant-baseline', 'middle');
-  numText.setAttribute('fill', '#fff');
-  numText.setAttribute('font-size', '13');
-  numText.setAttribute('font-weight', '700');
-  numText.setAttribute('font-family', 'Playfair Display, serif');
+  const numText = svgEl('text', { x: lp.x, y: lp.y - 8, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
+    fill: '#fff', 'font-size': '13', 'font-weight': '700', 'font-family': 'Playfair Display, serif' });
   numText.textContent = seg.num;
-
-  // Short title (first word)
-  const shortTitle = seg.title.split(' ')[0];
-  const titleText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  titleText.setAttribute('x', lp.x);
-  titleText.setAttribute('y', lp.y + 10);
-  titleText.setAttribute('text-anchor', 'middle');
-  titleText.setAttribute('dominant-baseline', 'middle');
-  titleText.setAttribute('fill', 'rgba(255,255,255,0.75)');
-  titleText.setAttribute('font-size', '8');
-  titleText.setAttribute('font-family', 'DM Sans, sans-serif');
-  titleText.textContent = shortTitle;
-
-  g.appendChild(path);
-  g.appendChild(numText);
-  g.appendChild(titleText);
+  const titleText = svgEl('text', { x: lp.x, y: lp.y + 10, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
+    fill: 'rgba(255,255,255,0.75)', 'font-size': '8', 'font-family': 'DM Sans, sans-serif' });
+  titleText.textContent = seg.title.split(' ')[0];
+  const mark = svgEl('text', { x: lp.x, y: lp.y + 24, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
+    fill: '#fff', 'font-size': '9', 'font-family': 'DM Sans, sans-serif' });
+  g.append(path, numText, titleText, mark);
   svg.appendChild(g);
+  groups.push({ g, path, mark });
 
-  g.addEventListener('click', () => {
-    // reset all
-    svg.querySelectorAll('.seg-fill').forEach((p, idx) => {
-      p.setAttribute('opacity', activeIndex === idx ? '1' : '0.85');
-    });
-
-    if (activeIndex === i) {
-      // deselect
-      path.setAttribute('opacity', '0.85');
-      activeIndex = null;
-      scoreNum.textContent = '8';
-      detail.innerHTML = `
-        <div class="dc-num">CLIQUEZ UN SEGMENT</div>
-        <div class="dc-title">Vision 360°</div>
-        <div class="dc-body">Chaque segment représente un critère d'évaluation. Ensemble, ils forment une analyse complète de la viabilité de votre projet. Aucun ne doit être négligé.</div>
-      `;
-      return;
-    }
-
-    activeIndex = i;
-    svg.querySelectorAll('.seg-fill').forEach((p, idx) => {
-      p.setAttribute('opacity', idx === i ? '1' : '0.45');
-    });
-
-    scoreNum.textContent = seg.num;
-
-    const criticalBadge = seg.critical ? `<div class="critical-badge">⚡ Dimension critique</div>` : '';
-    const checks = seg.checks.map(c => `<span style="display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;background:rgba(184,115,51,0.15);border-radius:6px;font-size:11px;color:var(--gold)">${c}</span>`).join('');
-
-    detail.innerHTML = `
-      ${criticalBadge}
-      <div class="dc-num">${seg.num} / 08</div>
-      <div class="dc-title">${seg.title}</div>
-      <div class="dc-body">${seg.body}<br><br>${checks}</div>
-      <div class="dc-example">${seg.example}</div>
-    `;
+  const activate = () => select(activeIndex === i ? null : i);
+  g.addEventListener('click', activate);
+  g.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); }
   });
 });
+
+function paintWheel() {
+  groups.forEach(({ g, path, mark }, i) => {
+    const d = doneCount(i), total = segments[i].checks.length;
+    const ok = isValidated(i);
+    // l'opacité traduit le niveau de preuve ; la sélection prime
+    let op = 0.35 + 0.6 * (d / total);
+    if (activeIndex !== null) op = (i === activeIndex) ? 1 : Math.min(op, 0.4);
+    path.setAttribute('opacity', op.toFixed(2));
+    mark.textContent = ok ? '✓' : `${d}/${total}`;
+    g.setAttribute('aria-pressed', String(i === activeIndex));
+    g.setAttribute('aria-label', `${segments[i].num} ${segments[i].title}${segments[i].critical ? ', critique' : ''} : ${d} preuves sur ${total}${ok ? ', validée' : ''}`);
+  });
+}
+
+function renderDetail() {
+  if (activeIndex === null) { detail.innerHTML = DEFAULT_DETAIL; return; }
+  const i = activeIndex, seg = segments[i];
+  const d = doneCount(i), need = threshold(i), ok = isValidated(i);
+  detail.innerHTML = `
+    ${seg.critical ? '<div class="critical-badge">⚡ Dimension critique — 4/4 requis</div>' : ''}
+    <div class="dc-num">${seg.num} / 0${N}</div>
+    <div class="dc-title">${seg.title}</div>
+    <div class="dc-body">${seg.body}</div>
+    <div class="dc-example">${seg.example}</div>
+    <div class="checks" role="group" aria-label="Preuves à cocher">
+      ${seg.checks.map((c, j) => `<button type="button" class="check-btn" data-j="${j}" aria-pressed="${state[i][j]}">${c}</button>`).join('')}
+    </div>
+    <div class="dc-progress ${ok ? 'ok' : ''}">${ok ? '✓ Dimension validée' : `${d} / ${need} preuves requises`}</div>`;
+  detail.querySelectorAll('.check-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const j = +btn.dataset.j;
+      state[i][j] = !state[i][j];
+      save();
+      update();
+      const again = detail.querySelector(`.check-btn[data-j="${j}"]`);
+      if (again) again.focus();
+    });
+  });
+}
+
+function computeVerdict() {
+  const validated = segments.map((_, i) => isValidated(i));
+  const score = validated.filter(Boolean).length;
+  const critMissing = segments.map((s, i) => i).filter(i => segments[i].critical && !validated[i]);
+  const blind = segments.map((s, i) => i).filter(i => !validated[i])
+    .sort((a, b) => (segments[b].critical - segments[a].critical) || (doneCount(a) - doneCount(b)));
+  let band = score >= 6 ? 'go' : score >= 3 ? 'adjust' : 'rethink';
+  const capped = band === 'go' && critMissing.length > 0;
+  if (capped) band = 'adjust';
+  return { score, band, capped, critMissing, blind };
+}
+
+const BANDS = {
+  go: { title: '✅ Lancer', color: '#6fcf97' },
+  adjust: { title: '⚠️ Ajuster', color: '#f2c94c' },
+  rethink: { title: '🛑 Repenser', color: '#eb5757' }
+};
+
+function renderVerdict(v) {
+  document.querySelectorAll('.matrix-row').forEach(row => {
+    const cur = row.dataset.band === v.band;
+    row.classList.toggle('current', cur);
+    row.classList.toggle('dim', !cur);
+  });
+  const b = BANDS[v.band];
+  let msg;
+  if (v.capped) msg = `Score de ${v.score}/8, mais ${v.critMissing.length > 1 ? 'des dimensions critiques ne sont' : 'une dimension critique n\'est'} pas validée${v.critMissing.length > 1 ? 's' : ''} : le verdict est plafonné. Un point fort ne compense pas une faille bloquante.`;
+  else if (v.band === 'go') msg = `Score de ${v.score}/8, dimensions critiques couvertes. Lancez — en traitant les angles morts restants par un plan de mitigation.`;
+  else if (v.band === 'adjust') msg = `Score de ${v.score}/8. Priorisez les angles morts ci-dessous, critiques d'abord, avant d'engager vos ressources.`;
+  else msg = `Score de ${v.score}/8. Le projet est prématuré : revenez à la proposition de valeur et à la viabilité financière.`;
+  verdictEl.style.borderLeftColor = b.color;
+  verdictEl.innerHTML = `
+    <div class="verdict-title" style="color:${b.color}">${b.title} · ${v.score}/8</div>
+    <p>${msg}</p>
+    ${v.blind.length ? `<div class="blindspots" aria-label="Angles morts">${v.blind.map(i =>
+      `<span class="blindspot ${segments[i].critical ? 'crit' : ''}">${segments[i].critical ? '⚡ ' : ''}${segments[i].title} · ${doneCount(i)}/${segments[i].checks.length}</span>`).join('')}</div>`
+      : '<p style="margin-top:8px;color:#6fcf97">Aucun angle mort déclaré. Vérifiez que chaque preuve est réelle, pas supposée.</p>'}
+    <div class="tools">
+      <button type="button" class="tool-btn primary" id="copyBtn">Copier mon score pour LinkedIn</button>
+      <button type="button" class="tool-btn" id="resetBtn">Réinitialiser</button>
+    </div>`;
+  document.getElementById('copyBtn').addEventListener('click', () => copyScore(v));
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (!confirm('Effacer toutes vos réponses ?')) return;
+    state = segments.map(seg => seg.checks.map(() => false));
+    save(); activeIndex = null; update();
+  });
+}
+
+function copyScore(v) {
+  const lines = [
+    `Mémo 360° CSMCI Groupe — mon score : ${v.score}/8 → ${BANDS[v.band].title.replace(/^\S+\s/, '')}`,
+    v.blind.length ? `Mes angles morts : ${v.blind.map(i => segments[i].title).join(', ')}.` : 'Aucun angle mort déclaré.',
+    'Et vous, combien en avez-vous réellement validés ? csmcigroupe.com'
+  ];
+  const text = lines.join('\n');
+  const btn = document.getElementById('copyBtn');
+  const done = ok => { if (btn) btn.textContent = ok ? 'Copié ✓' : 'Copie impossible — sélectionnez le texte'; };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => done(true), () => fallbackCopy(text, done));
+  } else fallbackCopy(text, done);
+}
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+  ta.remove(); done(ok);
+}
+
+function select(i) { activeIndex = i; update(); }
+
+function update() {
+  const v = computeVerdict();
+  scoreNum.textContent = `${v.score}/8`;
+  paintWheel();
+  renderDetail();
+  renderVerdict(v);
+}
+
+update();
 </script>
 </body>
 </html>
